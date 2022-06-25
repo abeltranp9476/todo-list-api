@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TodoRequest;
 use App\Http\Resources\TodoCollection;
+use App\Http\Resources\TodoResource;
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
 {
@@ -25,9 +28,19 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TodoRequest $request)
     {
-        //
+        Todo::create([
+            'user_id' => Auth::user()->id,
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        $response = [
+            'result' => 'Todo ok',
+        ];
+
+        return $this->responseOk($response);
     }
 
     /**
@@ -36,9 +49,9 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Todo $todo)
     {
-        //
+        return new TodoResource($todo);
     }
 
     /**
@@ -48,9 +61,17 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TodoRequest $request, Todo $todo)
     {
-        //
+        $todo->name = $request->name;
+        if ($request->description) $todo->description = $request->description;
+        $todo->update();
+        $response = [
+            'result' => 'Todo ok',
+            'updated' => new TodoResource($todo),
+        ];
+
+        return $this->responseOk($response);
     }
 
     /**
@@ -59,8 +80,8 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Todo $todo)
     {
-        //
+        $todo->delete();
     }
 }
