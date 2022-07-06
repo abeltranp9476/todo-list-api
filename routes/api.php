@@ -23,5 +23,6 @@ Route::post('/register', [RegisterController::class, 'createAccount']);
 Route::middleware('auth:sanctum')->post('/logout', [LoginController::class, 'logout']);
 Route::middleware('auth:sanctum')->post('/user/change_password', [UserController::class, 'changePassword']);
 Route::middleware('auth:sanctum')->get('/user/{user}', [UserController::class, 'index']);
-Route::middleware('auth:sanctum')->resource('/todo', TodoController::class)->except('destroy');
 Route::middleware('auth:sanctum')->delete('/todo/delete', [TodoController::class, 'destroy']);
+Route::middleware('auth:sanctum')->put('/todo/do', [TodoController::class, 'markAsDo']);
+Route::middleware('auth:sanctum')->resource('/todo', TodoController::class)->except('destroy');
