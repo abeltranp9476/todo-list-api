@@ -89,4 +89,11 @@ class TodoController extends Controller
         $todoList = Todo::whereIn('id', $ids);
         $todoList->delete();
     }
+
+    public function markAsDo(Request $request)
+    {
+        $ids = explode(',', $request->ids);
+        Todo::whereIn('id', $ids)
+            ->update(['made_at' => now()]);
+    }
 }
