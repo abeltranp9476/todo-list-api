@@ -18,7 +18,8 @@ class TodoController extends Controller
      */
     public function index()
     {
-        $todos = Todo::paginate(10);
+        $todos = Todo::where('user_id', Auth::user()->id)
+            ->paginate(10);
         return new TodoCollection($todos);
     }
 
@@ -51,7 +52,9 @@ class TodoController extends Controller
      */
     public function show(Todo $todo)
     {
-        return new TodoResource($todo);
+        if ($todo->user_id === Auth::user()->id) {
+            return new TodoResource($todo);
+        }
     }
 
     /**
@@ -80,8 +83,10 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Todo $todo)
+    public function destroy(Request $request)
     {
-        $todo->delete();
+        $ids = explode(',', $request->ids);
+        $todoList = Todo::whereIn('id', $ids);
+        $todoList->delete();
     }
 }
