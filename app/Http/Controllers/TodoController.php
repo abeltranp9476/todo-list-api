@@ -16,10 +16,11 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = ($request->per_page) ? $request->per_page : 10;
         $todos = Todo::where('user_id', Auth::user()->id)
-            ->paginate(10);
+            ->paginate($perPage);
         return new TodoCollection($todos);
     }
 
